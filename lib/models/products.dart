@@ -6,6 +6,8 @@ class Product {
   String? picture;
   int price;
 
+  String? id;
+
   Product({
     required this.available,
     required this.name,
