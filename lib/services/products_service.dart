@@ -16,11 +16,10 @@ class ProductsService extends ChangeNotifier {
   }
 
   Future loadProducts() async {
-    print('1. ¡La función loadProducts ha comenzado!');
+    isLoading = true;
+    notifyListeners();
     final url = Uri.https(_baseUrl, 'products.json');
-    print('2. Intentando conectar a: $url');
     final response = await http.get(url);
-    print('3. ¡Respuesta recibida!');
 
     final Map<String, dynamic> productsMap = json.decode(response.body);
 
@@ -29,6 +28,7 @@ class ProductsService extends ChangeNotifier {
       tempProduct.id = key;
       products.add(tempProduct);
     });
-    print(products[0].name);
+    isLoading = false;
+    notifyListeners();
   }
 }

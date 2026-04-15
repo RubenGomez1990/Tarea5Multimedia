@@ -4,7 +4,7 @@ class Product {
   bool available;
   String name;
   String? picture;
-  int price;
+  double price;
 
   String? id;
 
@@ -23,7 +23,7 @@ class Product {
         available: json["available"],
         name: json["name"],
         picture: json["picture"],
-        price: json["price"],
+        price: json["price"].toDouble(),
       );
 
   Map<String, dynamic> toJson() => {
