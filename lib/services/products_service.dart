@@ -8,6 +8,7 @@ class ProductsService extends ChangeNotifier {
   final String _baseUrl =
       'flutter-multimedia-default-rtdb.europe-west1.firebasedatabase.app';
   final List<Product> products = [];
+  late Product selectedProduct;
 
   bool isLoading = true;
 

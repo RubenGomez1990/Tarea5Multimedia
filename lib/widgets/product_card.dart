@@ -21,7 +21,6 @@ class ProductCard extends StatelessWidget {
             _ProductDetails(name: product.name, subtitle: product.id!),
             Positioned(
                 top: 0, right: 0, child: _PriceTag(price: product.price)),
-            //TODO: Mostrar de forma condicional depenent de si el producte està disponible o no
             if (!product.available)
               Positioned(top: 0, left: 0, child: _Availability()),
           ],
