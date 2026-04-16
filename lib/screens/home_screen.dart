@@ -24,6 +24,8 @@ class HomeScreen extends StatelessWidget {
             product: productsService.products[index],
           ),
           onTap: () {
+            productsService.newPicture =
+                null; // Lo ponemos aquí para que se reinicie la nueva imagen a null y no cambiar si modificamos otro dato de producto.
             // Crear una instancia copia de un producto y con el onTap nos lleva al producto (asi no se modifica el producto de la base de datos)
             productsService.selectedProduct =
                 productsService.products[index].copy();
@@ -34,6 +36,8 @@ class HomeScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
+          productsService.newPicture =
+              null; // Lo ponemos aquí para que se reinicie la nueva imagen a null y no cambiar si modificamos otro dato de producto.
           productsService.selectedProduct =
               Product(available: true, name: '', price: 0);
           Navigator.of(context).pushNamed('product');

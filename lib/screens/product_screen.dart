@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:productes_app/providers/product_form_provider.dart';
 import 'package:productes_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
@@ -56,8 +57,15 @@ class _ProductScreenBody extends StatelessWidget {
                   top: 60,
                   right: 20,
                   child: IconButton(
-                    onPressed: () {
-                      //TODO: Implementar funcionalitat de cercar imatge de la galeria
+                    onPressed: () async {
+                      final ImagePicker picker = ImagePicker();
+                      // Pick an image.
+                      //final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+                      // Capture a photo.
+                      final XFile? photo =
+                          await picker.pickImage(source: ImageSource.camera);
+                      print(photo!.path);
+                      productService.updateSelectedImage(photo.path);
                     },
                     icon: Icon(
                       Icons.camera_alt_outlined,
@@ -77,12 +85,24 @@ class _ProductScreenBody extends StatelessWidget {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.save_outlined),
-          onPressed: (() {
-            if (!productForm.isValidForm())
-              return; // Si el formulario es valido, llámamos al método para guardar o crear producto.
-            productService.saveOrCreateProduct(productForm.tempProduct);
-          })),
+          child: productService.isSaving
+              ? const CircularProgressIndicator(
+                  color: Colors.white,
+                )
+              : const Icon(Icons.save_outlined),
+          onPressed: productService.isSaving
+              ? null
+              : () async {
+                  if (!productForm.isValidForm()) return;
+                  //
+                  final String? imageUrl = await productService.uploadImage();
+                  // Si el formulario es valido, llámamos al método para guardar o crear producto.
+                  if (imageUrl != null) {
+                    productForm.tempProduct.picture = imageUrl;
+                    productService.saveOrCreateProduct(productForm.tempProduct);
+                  }
+                }),
+      //
     );
   }
 }
