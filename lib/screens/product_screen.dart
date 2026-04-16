@@ -32,6 +32,7 @@ class _ProductScreenBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final productForm = Provider.of<ProductFormProvider>(context);
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -78,7 +79,9 @@ class _ProductScreenBody extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
           child: Icon(Icons.save_outlined),
           onPressed: (() {
-            //TODO: Emmagatzemar producte
+            if (!productForm.isValidForm())
+              return; // Si el formulario es valido, llámamos al método para guardar o crear producto.
+            productService.saveOrCreateProduct(productForm.tempProduct);
           })),
     );
   }
@@ -89,6 +92,7 @@ class _ProductForm extends StatelessWidget {
   Widget build(BuildContext context) {
     final productForm = Provider.of<ProductFormProvider>(context);
     final tempProduct = productForm.tempProduct;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Container(
@@ -96,6 +100,8 @@ class _ProductForm extends StatelessWidget {
         width: double.infinity,
         decoration: _buildBoxDecoration(),
         child: Form(
+          key: productForm.formKey,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             children: [
               SizedBox(height: 10),
