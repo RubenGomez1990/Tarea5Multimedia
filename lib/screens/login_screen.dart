@@ -117,15 +117,25 @@ class _LoginForm extends StatelessWidget {
               onPressed: loginForm.isLoading
                   ? null
                   : () async {
-                      // Deshabilitam el teclat
+                      // Oculta el teclado
                       FocusScope.of(context).unfocus();
 
-                      if (loginForm.isValidForm()) {
-                        loginForm.isLoading = true;
-                        //Simulam una petició
-                        await Future.delayed(Duration(seconds: 2));
-                        loginForm.isLoading = false;
+                      // Valida que el email tenga el @ y la contraseña al menos 6 caracteres
+                      if (!loginForm.isValidForm()) return;
+
+                      // LLAMAMOS A FIREBASE Y ESPERAMOS SU RESPUESTA (await)
+                      await loginForm.loginOrRegister();
+
+                      // Solo pasamos si Firebase no ha devuelto errores
+                      if (loginForm.errorMessage.isEmpty) {
                         Navigator.pushReplacementNamed(context, 'home');
+                      } else {
+                        // Si la contraseña está mal, mostramos el error por pantalla
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(loginForm.errorMessage),
+                          backgroundColor: Colors
+                              .red, // Opcional: para que se vea claro que es un error
+                        ));
                       }
                     },
             ),

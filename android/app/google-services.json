@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "583764575382",
+    "firebase_url": "https://flutter-multimedia-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "flutter-multimedia",
+    "storage_bucket": "flutter-multimedia.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:583764575382:android:b4ef2d277294cac5332eb7",
+        "android_client_info": {
+          "package_name": "com.example.productes_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4lw5ydOZOvJv_ONPhqJ9CO0ET70SqpJw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

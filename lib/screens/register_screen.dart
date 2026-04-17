@@ -70,7 +70,8 @@ class _RegisterForm extends StatelessWidget {
 
     return Container(
       child: Form(
-        key: loginForm.formKey,
+        key: loginForm
+            .formKey, // Ponemos la llave necesaria para hacer referencia al formulario
         autovalidateMode: AutovalidateMode.onUserInteraction,
         child: Column(
           children: [
@@ -83,8 +84,10 @@ class _RegisterForm extends StatelessWidget {
                 labelText: 'Correu electrònic',
                 prefixIcon: Icons.alternate_email_outlined,
               ),
-              onChanged: (value) => loginForm.email = value,
+              onChanged: (value) => loginForm.email =
+                  value, // Aqui recoge los datos y actualizar los datos del provider
               validator: (value) {
+                // IMPORTANTE: Aqui es donde validamos el REGEX para comprobar que tenga formato de email.
                 String pattern =
                     r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
                 RegExp regExp = RegExp(pattern);
@@ -123,9 +126,11 @@ class _RegisterForm extends StatelessWidget {
                   ? null
                   : () async {
                       FocusScope.of(context).unfocus();
-                      if (!loginForm.isValidForm()) return;
+                      if (!loginForm.isValidForm())
+                        return; // Aqui comprobamos que los valores son válidos
 
-                      await loginForm.loginOrRegister();
+                      await loginForm
+                          .loginOrRegister(); // Y aqui finalmente se mandan a la base de datos los valores comprobados y validados.
 
                       if (loginForm.errorMessage.isEmpty) {
                         Navigator.pushReplacementNamed(context, 'home');

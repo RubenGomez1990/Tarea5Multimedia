@@ -3,10 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginFormProvider extends ChangeNotifier {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   String email = '';
   String password = '';
 
+  // Valida el formulario
   bool isValidForm() {
     print('Valor del formulari: ${formKey.currentState?.validate()}');
     print('$email - $password');
@@ -45,8 +46,6 @@ class LoginFormProvider extends ChangeNotifier {
     isLoading = true;
     errorMessage = '';
     notifyListeners();
-
-    final FirebaseAuth _auth = FirebaseAuth.instance;
 
     try {
       if (isRegister) {
