@@ -60,7 +60,6 @@ class _ProductScreenBody extends StatelessWidget {
                     onPressed: () async {
                       final ImagePicker picker = ImagePicker();
                       // Pick an image.
-                      //final XFile? image = await picker.pickImage(source: ImageSource.gallery);
                       // Capture a photo.
                       final XFile? photo =
                           await picker.pickImage(source: ImageSource.camera);
@@ -99,10 +98,9 @@ class _ProductScreenBody extends StatelessWidget {
                   // Si el formulario es valido, llámamos al método para guardar o crear producto.
                   if (imageUrl != null) {
                     productForm.tempProduct.picture = imageUrl;
-                    productService.saveOrCreateProduct(productForm.tempProduct);
                   }
+                  productService.saveOrCreateProduct(productForm.tempProduct);
                 }),
-      //
     );
   }
 }

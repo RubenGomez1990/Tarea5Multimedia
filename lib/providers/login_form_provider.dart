@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginFormProvider extends ChangeNotifier {
-  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  GlobalKey<FormState> formKey =
+      GlobalKey<FormState>(); // Conecta el formulario con el provider
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String email = '';
   String password = '';
 
-  // Valida el formulario
+  // Valida el formulario dando la orden
   bool isValidForm() {
     print('Valor del formulari: ${formKey.currentState?.validate()}');
     print('$email - $password');
     return formKey.currentState?.validate() ?? false;
   }
 
-  //final FirebaseAuth _auth = FirebaseAuth.instance;
   UserCredential? userLogged;
   User? user;
 
