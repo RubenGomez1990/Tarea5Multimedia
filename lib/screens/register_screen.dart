@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:productes_app/providers/login_form_provider.dart';
 import 'package:productes_app/ui/input_decorations.dart';
 import 'package:productes_app/widgets/widgets.dart';
-import 'package:provider/provider.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+class RegisterScreen extends StatelessWidget {
+  const RegisterScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,40 +14,47 @@ class LoginScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              SizedBox(height: 250),
+              const SizedBox(height: 250),
               CardContainer(
                 child: Column(
                   children: [
-                    SizedBox(height: 10),
-                    Text('Login',
+                    const SizedBox(height: 10),
+                    Text('Crear compte',
                         style: Theme.of(context).textTheme.headlineMedium),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
+
+                    // Inicializamos el Provider configurado para REGISTRO
                     ChangeNotifierProvider(
-                      create: (_) => LoginFormProvider(),
-                      child: _LoginForm(),
-                    ),
+                      create: (_) {
+                        final provider = LoginFormProvider();
+                        provider.isLogin = false; // Apagamos el login
+                        provider.isRegister = true; // Encendemos el registro
+                        return provider;
+                      },
+                      child: _RegisterForm(),
+                    )
                   ],
                 ),
               ),
-              SizedBox(height: 50),
+              const SizedBox(height: 50),
+
+              // Botón para volver al Login si ya tiene cuenta
               TextButton(
-                onPressed: () {
-                  // Destruye el Login y viaja a la ruta de registro
-                  Navigator.pushReplacementNamed(context, 'register');
-                },
+                onPressed: () =>
+                    Navigator.pushReplacementNamed(context, 'login'),
                 style: ButtonStyle(
                   overlayColor: WidgetStateProperty.all(Colors.indigo),
                   shape: WidgetStateProperty.all(const StadiumBorder()),
                 ),
                 child: const Text(
-                  'Crear un nou compte',
+                  'Ja tens un compte? Inicia sessió',
                   style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.black87),
                 ),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
             ],
           ),
         ),
@@ -56,22 +63,23 @@ class LoginScreen extends StatelessWidget {
   }
 }
 
-class _LoginForm extends StatelessWidget {
+class _RegisterForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loginForm = Provider.of<LoginFormProvider>(context);
+
     return Container(
       child: Form(
         key: loginForm.formKey,
-        //TODO: Mantenir la referencia a la Key
         autovalidateMode: AutovalidateMode.onUserInteraction,
         child: Column(
           children: [
+            // Campo Email
             TextFormField(
               autocorrect: false,
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecorations.authInputDecoration(
-                hintText: 'john.doe@gmail.com',
+                hintText: 'ejemplo@correo.com',
                 labelText: 'Correu electrònic',
                 prefixIcon: Icons.alternate_email_outlined,
               ),
@@ -79,17 +87,19 @@ class _LoginForm extends StatelessWidget {
               validator: (value) {
                 String pattern =
                     r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-                RegExp regExp = new RegExp(pattern);
-                return regExp.hasMatch(value!) ? null : 'No es de tipus correu';
+                RegExp regExp = RegExp(pattern);
+                return regExp.hasMatch(value ?? '') ? null : 'Correu no vàlid';
               },
             ),
-            SizedBox(height: 30),
+
+            const SizedBox(height: 30),
+
+            // Campo Password
             TextFormField(
               autocorrect: false,
               obscureText: true,
-              keyboardType: TextInputType.visiblePassword,
               decoration: InputDecorations.authInputDecoration(
-                hintText: '*****',
+                hintText: '******',
                 labelText: 'Contrasenya',
                 prefixIcon: Icons.lock_outline,
               ),
@@ -97,37 +107,42 @@ class _LoginForm extends StatelessWidget {
               validator: (value) {
                 return (value != null && value.length >= 6)
                     ? null
-                    : 'La contrasenya ha de ser de 6 caràcters';
+                    : 'Mínim 6 caràcters';
               },
             ),
-            SizedBox(height: 30),
+
+            const SizedBox(height: 30),
+
+            // Botón de Registro
             MaterialButton(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
               disabledColor: Colors.grey,
-              elevation: 0,
               color: Colors.deepPurple,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
-                child: Text(
-                  loginForm.isLoading ? 'Esperi' : 'Iniciar sessió',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
               onPressed: loginForm.isLoading
                   ? null
                   : () async {
-                      // Deshabilitam el teclat
                       FocusScope.of(context).unfocus();
+                      if (!loginForm.isValidForm()) return;
 
-                      if (loginForm.isValidForm()) {
-                        loginForm.isLoading = true;
-                        //Simulam una petició
-                        await Future.delayed(Duration(seconds: 2));
-                        loginForm.isLoading = false;
+                      await loginForm.loginOrRegister();
+
+                      if (loginForm.errorMessage.isEmpty) {
                         Navigator.pushReplacementNamed(context, 'home');
+                      } else {
+                        // Aquí podrías mostrar el error de Firebase
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(loginForm.errorMessage)));
                       }
                     },
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                child: Text(
+                  loginForm.isLoading ? 'Esperi...' : 'Crear compte',
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
             ),
           ],
         ),
